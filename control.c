@@ -8,10 +8,8 @@
 #include <hcsr04.h>
 #include <turn.h>
 #include <TCRC5000.h>
-
-
-static float Target_velocity=25.0; //¸ø¶¨Ä¿±êÖµ
-float Encoder_R=0.0,Encoder_L=0.0; //¸ø¶¨Ä¿±êÖµ
+static float Target_velocity=25.0; //ç»™å®šç›®æ ‡å€¼
+float Encoder_R=0.0,Encoder_L=0.0; //ç»™å®šç›®æ ‡å€¼
 
 int Moto_L,Moto_R;
 u8 moto_time=0;
@@ -31,7 +29,7 @@ void TIM1_UP_IRQHandler(void)
 	 
 	 Xianfu_Pwm_L();
 	 Xianfu_Pwm_R();
-	 //¶ÔĞ¡³µ½øĞĞÏŞ·ù£¬¼ÆËãºÍpid¿ØÖÆ
+	 //å¯¹å°è½¦è¿›è¡Œé™å¹…ï¼Œè®¡ç®—å’Œpidæ§åˆ¶
 
 	 printf("%.2f,%.2f,%.2f,%d,%d \n",Encoder_L,Encoder_R,Target_velocity,Moto_R,Moto_L);
 	 TIM_ClearITPendingBit(TIM1,TIM_IT_Update);  
@@ -43,7 +41,7 @@ void TIM1_UP_IRQHandler(void)
 
 
 //  float Position_KP=1.8,Position_KI=0.0013,Position_KD=0.5;
-int Position_PID (float Encoder,float Target) //66mmµÄÂÖ ËÙ¶ÈÔ¼Îª0.5mÃ¿Ãë
+int Position_PID (float Encoder,float Target) //66mmçš„è½® é€Ÿåº¦çº¦ä¸º0.5mæ¯ç§’
 {
     float Position_KP=1.3,Position_KI=0.0,Position_KD=0.4;
 	
@@ -73,7 +71,7 @@ extern float big_angle,small_angle;
 float distance=0;
 int fruit_count=0,count=0,unfruit_count=0;
 
-void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
+void USART3_IRQHandler(void) //æ¥æ”¶åˆ°æ•°æ®å¼€å¯ä¸­æ–­
 {
 	static u8 k=0;
   static u8 RxBuffer1[4]={0};
@@ -83,18 +81,18 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 	u8 com_data=0;
   int big,small,big_rally_angle,small_rally_angle,a;
   float dis,sum;
-	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)//ÅĞ¶ÏÊÇ·ñ½ÓÊÕµ½Êı¾İ
+	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)//åˆ¤æ–­æ˜¯å¦æ¥æ”¶åˆ°æ•°æ®
 	{
 		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
 	 
-		com_data=USART_ReceiveData(USART3); //½ÓÊÕµ½µÄÊı¾İ´«µ½dat
+		com_data=USART_ReceiveData(USART3); //æ¥æ”¶åˆ°çš„æ•°æ®ä¼ åˆ°dat
 		
 		if(RxState==0&&com_data==0x2c)  //0x2c??
 				{
 					RxState=1;
 					RxBuffer1[k++]=com_data;
 
-				//	printf(" µÚÒ»¸öÊı¾İcom_data=%x \n",com_data);
+				//	printf(" ç¬¬ä¸€ä¸ªæ•°æ®com_data=%x \n",com_data);
 				}
 		
 		else if(RxState==1&&com_data==0x12)  //0x12??
@@ -102,7 +100,7 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 					RxState=2;
 					RxBuffer1[k++]=com_data;	
 					
-				//	printf("  µÚ¶ş¸öÊı¾İcom_data=%x  \n",com_data);
+				//	printf("  ç¬¬äºŒä¸ªæ•°æ®com_data=%x  \n",com_data);
 				}
 				
 		else if(RxState==2)
@@ -120,7 +118,7 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 			    Ch=RxBuffer1[3];
 						
 				//  sign=RxBuffer1[k-2];
-				 // printf(" ½á¹û= %d  \n  ",sign);
+				 // printf(" ç»“æœ= %d  \n  ",sign);
 	
 					}
 				}		
@@ -142,19 +140,19 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 			}
 			
 			distance=sum/5+1.0;
-			sum=0;                      //³¬Éù²¨²âÁ¿ºáÏò¾àÀë
+			sum=0;                      //è¶…å£°æ³¢æµ‹é‡æ¨ªå‘è·ç¦»
 			
-			Angle_solving(distance);   //×¥È¡Ëã·¨¼ÆËã´ó±ÛĞ¡±Û×¥È¡½Ç¶È 
+			Angle_solving(distance);   //æŠ“å–ç®—æ³•è®¡ç®—å¤§è‡‚å°è‡‚æŠ“å–è§’åº¦ 
 			
 			big_rally_angle=180-(int)big_angle;
-			big=big_arm_work(big_rally_angle);      //¼ÆËã´ó±Û×ª¶¯ËùĞèÕ¼¿Õ±È
+			big=big_arm_work(big_rally_angle);      //è®¡ç®—å¤§è‡‚è½¬åŠ¨æ‰€éœ€å ç©ºæ¯”
 			
 			small_rally_angle=180-(int)small_angle;
-			small=small_arm_work(small_rally_angle); //¼ÆËãĞ¡±Û×ª¶¯ËùĞèÕ¼¿Õ
+			small=small_arm_work(small_rally_angle); //è®¡ç®—å°è‡‚è½¬åŠ¨æ‰€éœ€å ç©º
 	//		printf("dis= %.2f   big=%d  small=%d ",distance,big_rally_angle,small_rally_angle);
 			
 			delay_ms(10);
-			                //»úĞµ±ÛÔË¶¯Ñ§Äæ½â
+			                //æœºæ¢°è‡‚è¿åŠ¨å­¦é€†è§£
 
 			OLED_Clear();
 			oled_show_furit_count();
@@ -163,12 +161,12 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 				  playsong(2);       
           delay_ms(10);
 					
-		      Gain_Ripe_Fruit(big,small);      //»úĞµ±Û×¥È¡
+		      Gain_Ripe_Fruit(big,small);      //æœºæ¢°è‡‚æŠ“å–
 					delay_ms(100);
 					
 					fruit_count++;
 
-					printf("¼ì²âµ½³ÉÊì¹ûÊµ");
+					printf("æ£€æµ‹åˆ°æˆç†Ÿæœå®");
 					
 				
 					delay_ms(10);
@@ -188,7 +186,7 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 					
 					unfruit_count++;
 		
-					printf("Î´³ÉÊì");
+					printf("æœªæˆç†Ÿ");
 
 					delay_ms(10);
 					Not_detected=0; 
@@ -202,14 +200,14 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 					if(Not_detected==1)
 					{
 						count++;
-   //         printf("Ã»ÓĞ¼ì²âµ½");
+   //         printf("æ²¡æœ‰æ£€æµ‹åˆ°");
 						
 						if(count>=30)
                 {
 									turn_sign=1;
 									line_sign=0;
 									delay_ms(10);
-									TIM_Cmd(TIM6,ENABLE);	    //¿ªÆôÑ­¼£ÖĞ¶Ï
+									TIM_Cmd(TIM6,ENABLE);	    //å¼€å¯å¾ªè¿¹ä¸­æ–­
 								  count=0;
 									Openmv_off();
 									OLED_Clear();
@@ -220,7 +218,7 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 								}
 						else {USART_ITConfig(USART3,USART_IT_RXNE,ENABLE);}
 					}	
-					  //Not_detected±äÁ¿ÓÃÓÚÅĞ¶ÏÊÇ·ñ¼ì²âµ½ÁË¹ûÊµ£¬count±äÁ¿ÓÃÓÚÀÛ¼ÆÃ»ÓĞ¼ì²âµ½¹ûÊµµÄÊıÄ¿
+					  //Not_detectedå˜é‡ç”¨äºåˆ¤æ–­æ˜¯å¦æ£€æµ‹åˆ°äº†æœå®ï¼Œcountå˜é‡ç”¨äºç´¯è®¡æ²¡æœ‰æ£€æµ‹åˆ°æœå®çš„æ•°ç›®
 
 				}	
 			 else 
@@ -230,7 +228,7 @@ void USART3_IRQHandler(void) //½ÓÊÕµ½Êı¾İ¿ªÆôÖĞ¶Ï
 			  RxState = 0;
 			//  sign=0;		 
 			  USART_ITConfig(USART3,USART_IT_RXNE,ENABLE);
-			 }	          //½ÓÊÕÓĞÒì³£
+			 }	          //æ¥æ”¶æœ‰å¼‚å¸¸
 			}
 		}
 			 }	  
@@ -248,7 +246,7 @@ void TIM6_IRQHandler(void)
    TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 	 Follow_the_trail();
 	
-	 		if(line_sign==1) //¼ì²âµ½ÁËÍ£Ö¹Ïß
+	 		if(line_sign==1) //æ£€æµ‹åˆ°äº†åœæ­¢çº¿
 		{
 			delay_ms(2);
 			if(line_sign==1)
@@ -294,11 +292,11 @@ void TIM6_IRQHandler(void)
 
 void Motor_Init(void)
 {
-	 MOTO_Init();   // µç»ú³õÊ¼»¯
+	 MOTO_Init();   // ç”µæœºåˆå§‹åŒ–
 	 PWM_Init_TIM4_CH3(0,7199);
 	 PWM_Init_TIM4_CH4(0,7199);
-	 Encoder_TIM2_Init(); //±àÂëÆ÷1³õÊ¼»¯
-	 Encoder_TIM3_Init();//±àÂëÆ÷2³õÊ¼»¯
+	 Encoder_TIM2_Init(); //ç¼–ç å™¨1åˆå§‹åŒ–
+	 Encoder_TIM3_Init();//ç¼–ç å™¨2åˆå§‹åŒ–
 	 delay_ms(50);
 	 
 }
@@ -331,25 +329,25 @@ void Go_back(void)
     BIN1=1,   BIN2=0;
 
 }
-void Set_Pwm_Left(int moto) //Çı¶¯º¯Êı  Ç°½ø
+void Set_Pwm_Left(int moto) //é©±åŠ¨å‡½æ•°  å‰è¿›
 {
 	TIM_SetCompare3(TIM4,moto);
   AIN1=0,   AIN2=1;
 }
 
 
-void Set_Pwm_Right(int moto) //Çı¶¯º¯Êı  //Ç°½ø
+void Set_Pwm_Right(int moto) //é©±åŠ¨å‡½æ•°  //å‰è¿›
 {
 	TIM_SetCompare4(TIM4,moto);
   BIN1=0,   BIN2=1;
 }
-void Set_Pwm_Left_turn(int moto) //Çı¶¯º¯Êı  Ç°½ø
+void Set_Pwm_Left_turn(int moto) //é©±åŠ¨å‡½æ•°  å‰è¿›
 {
 	TIM_SetCompare3(TIM4,moto);
   AIN1=1,   AIN2=0;
 }
 
-void Set_Pwm_Right_turn(int moto) //Çı¶¯º¯Êı  //Ç°½ø
+void Set_Pwm_Right_turn(int moto) //é©±åŠ¨å‡½æ•°  //å‰è¿›
 {
 	TIM_SetCompare4(TIM4,moto);
   BIN1=1,   BIN2=0;
@@ -374,7 +372,7 @@ void Turn_Right(void)
 }
 
  
-int myabs(int a)  //È¡¾ø¶ÔÖµº¯Êı
+int myabs(int a)  //å–ç»å¯¹å€¼å‡½æ•°
 { 		   
 	 int temp;
 	 if(a<0)  temp=-a;  
@@ -382,20 +380,20 @@ int myabs(int a)  //È¡¾ø¶ÔÖµº¯Êı
 	 return temp;
 }
 
-void Set_Pwm_Right_Back(int moto) //Çı¶¯º¯Êı 
+void Set_Pwm_Right_Back(int moto) //é©±åŠ¨å‡½æ•° 
 {
 	TIM_SetCompare4(TIM4,moto);
   BIN1=1,   BIN2=0;
 }
 
-void Xianfu_Pwm_L(void)  //pwmÏŞ·ù ÒòÎª¸ø¶¨pwm×î´óÖµÎª7199
+void Xianfu_Pwm_L(void)  //pwmé™å¹… å› ä¸ºç»™å®špwmæœ€å¤§å€¼ä¸º7199
  {
    int Amplitude=7100;  
 
 	 if(Moto_L<-Amplitude)  Moto_L = -Amplitude;
 	 if(Moto_L>Amplitude)   Moto_L =  Amplitude;
  }
-void Xianfu_Pwm_R(void)  //pwmÏŞ·ù ÒòÎª¸ø¶¨pwm×î´óÖµÎª7199
+void Xianfu_Pwm_R(void)  //pwmé™å¹… å› ä¸ºç»™å®špwmæœ€å¤§å€¼ä¸º7199
  {
    int Amplitude=7100;  
 	 if(Moto_R<-Amplitude)  Moto_R = -Amplitude;
